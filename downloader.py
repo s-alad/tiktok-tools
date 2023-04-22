@@ -98,12 +98,12 @@ async def download_video(link:str):
         with open(path.join(direct, f"video.mp4"), "wb") as f:
             f.write(downloaded.read())
         
-        with open(path.join(direct, f"desc.txt"), "w") as f:
+        with open(path.join(direct, f"desc.txt"), "w", encoding="utf-8") as f:
             f.write(desc)
 
 
 #open links.txt and read the links
-f = open("links.txt", "r")
+f = open("links/results.txt", "r")
 links = f.readlines()
 f.close()
 
