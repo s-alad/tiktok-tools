@@ -90,9 +90,21 @@ async def save_video(video: Video, direct: str, link: str):
 
 async def download_video(link:str):
 
+    quick = link.split("/")
+    quick_author = quick[3].replace("@", "")
+    quick_id = quick[5].split("?")[0]
+    quick_direct = "downloads" + "\\" + str(quick_author) + "_" + str(quick_id)
+
+    if  path.exists(path.join(quick_direct, f"video.mp4")) and \
+        path.exists(path.join(quick_direct, f"desc.txt"))  and \
+        path.exists(path.join(quick_direct, f"link.txt")):
+        print(" >> already exists")
+        return
+
     # mobile emulation is necessary to retrieve slideshows
     # if you don't want this, you can set emulate_mobile=False and skip if the video has an image_post property
     async with AsyncTikTokAPI(emulate_mobile=True, navigation_timeout=120) as api:
+
         print("=" * 100)
         video: Video = await api.video(link)
         author = video.author
@@ -101,6 +113,8 @@ async def download_video(link:str):
 
         direct = "downloads" + "\\" + str(author.unique_id) + "_" + str(video.id)
         if not path.exists(direct): os.mkdir(direct)
+
+        #check if video.mp4, desc.txt, and link.txt already exist in the direct folder
 
         if video.image_post:
             print(" >> type slideshow")
@@ -135,7 +149,7 @@ f.close()
 #loop through the links and download the videos
 start = time.time()
 for link in links:
-    print(link)
+    #print(link)
     try:
         asyncio.run(download_video(link))
     except:
