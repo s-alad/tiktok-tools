@@ -1,2 +1,8 @@
 /downloads/*
 /profile
+/node_modules
+/client/node_modules
+node_modules/
+__pycache__
+client
+/client
