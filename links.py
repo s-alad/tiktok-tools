@@ -23,6 +23,7 @@ class Linker:
         options = ChromeOptions()
         # add experimental option to keep window open after test is done for debugging
         options.add_experimental_option("detach", True)
+        options.add_argument("--headless=new")
         options.add_argument("user-data-dir={}".format(self.path + "/profile"))
         self.driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
 
@@ -36,20 +37,27 @@ class Linker:
     def get_links(self, links):
         new_links = []
         for link in links:
-            new_links.append(self.get_link(link))
+            print(" >> getting link for {}".format(link))
+            try:
+                new_links.append(self.get_link(link))
+            except:
+                print(" >> failed to get link for")
         return new_links
     
     def close(self):
         self.driver.close()
 
 if __name__ == "__main__":
-    f = open("links/test.txt", "r")
+    f = open("links/raw.txt", "r")
     temp = f.read().splitlines()
     f.close()
 
+    print("=" * 100)    
+    print(" + starting process")
     linker = Linker()
     new_links = linker.get_links(temp)
     linker.close()
+    print("=" * 100)
     
     f = open("links/results.txt", "w")
     for link in new_links: f.write(link + "\n")
