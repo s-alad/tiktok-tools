@@ -3,13 +3,15 @@ import io
 import glob
 import logging
 import os
-import urllib.request
-from os import path
-
+import time
 import aiohttp
+import urllib.request
+
+from os import path
+from multiprocessing import Process
+
 from tiktokapipy.async_api import AsyncTikTokAPI
 from tiktokapipy.models.video import Video
-
 from tik import Tik
 
 async def save_slideshow(video: Video, direct: str):
@@ -90,7 +92,7 @@ async def download_video(link:str):
 
     # mobile emulation is necessary to retrieve slideshows
     # if you don't want this, you can set emulate_mobile=False and skip if the video has an image_post property
-    async with AsyncTikTokAPI(emulate_mobile=True) as api:
+    async with AsyncTikTokAPI(emulate_mobile=True, navigation_timeout=120) as api:
         print("=" * 100)
         video: Video = await api.video(link)
         author = video.author
@@ -111,10 +113,15 @@ async def download_video(link:str):
             with open(path.join(direct, f"video.mp4"), "wb") as f:
                 f.write(downloaded.read())
         
-        try:
-            with open(path.join(direct, f"desc.txt"), "w", encoding="utf-8") as f:
+        with open(path.join(direct, f"desc.txt"), "w", encoding="utf-8") as f:
+            try:
                 f.write(desc)
-        except: print(" >> failed to write description")
+            except: 
+                print(" >> failed to write description")
+                f.write("failed to write description: link: " + link)
+        
+        with open(path.join(direct, f"link.txt"), "w", encoding="utf-8") as f:
+            f.write(link)
         
         print(" >> done")
         print("=" * 100)
@@ -126,9 +133,43 @@ links = f.readlines()
 f.close()
 
 #loop through the links and download the videos
+start = time.time()
 for link in links:
+    print(link)
     try:
         asyncio.run(download_video(link))
     except:
         print(" >> unresolved process failure")
         print("=" * 100)
+end = time.time()
+print("Total time taken: ", end - start)
+
+
+""" loop = asyncio.get_event_loop()
+loop.run_until_complete(asyncio.gather(*[download_video(link) for link in links]))
+loop.close()
+ """
+
+""" from playwright.async_api import async_playwright
+
+def run_download_video(link):
+    asyncio.run(download_video(link))
+
+if __name__ == "__main__":
+
+    track_time_start = time.time()
+    
+
+    processes = []
+    for link in links:
+        p = Process(target=run_download_video, args=(link,))
+        processes.append(p)
+
+    for p in processes:
+        p.start()
+    
+    for p in processes:
+        p.join()
+    
+    track_time_end = time.time()
+    print("Total time taken: ", track_time_end - track_time_start) """
