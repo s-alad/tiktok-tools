@@ -3,7 +3,8 @@ loading = document.getElementById('loading')
 loading.innerHTML = "Loading..."
 
 function fetchImages() {
-    url = "http://127.0.0.1:5000/getimagesquick"
+    /* url = "http://127.0.0.1:5000/getimagesquick" */
+    url = "https://randomcore.up.railway.app/getimagesquick"
     console.log(url)
 
     //fetch url and when done fetching call decode 
