@@ -23,6 +23,24 @@ function decode(res) {
         img.src = "data:image/png;base64," + dump[i]
         // add class square to image
         img.classList.add('square')
+        //onclick the image, show the image in the center as a modal
+      /*   img.onclick = function () {
+            modal = document.getElementById('modal')
+            modalImg = document.getElementById('modalImg')
+            modal.style.display = "block"
+            modalImg.src = this.src
+
+            //when the user clicks on the modal, close it
+            modal.onclick = function () {
+                modal.style.display = "none"
+            }
+        } */
+
+        //onclick image take to new tab
+        img.onclick = function () {
+            // open in new tab
+            window.open(this.src)
+        }
         main.appendChild(img)
     }
     loading.innerHTML = ""
