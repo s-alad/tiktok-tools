@@ -6,3 +6,8 @@ node_modules/
 __pycache__
 client
 /client
+/data
+.env
+app.log
+run.log
+*.log
